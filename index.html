@@ -316,69 +316,86 @@
             <iframe src=""></iframe>
             <button class="hide-button" onclick="toggleIframeVisibility(this)">Hide</button>
         </div>
-    <script>
-        // Function to toggle the visibility of individual iframes
-        function toggleIframeVisibility(button) {
-            const iframeWrapper = button.parentElement; // Get the parent iframe-wrapper
-            const iframe = iframeWrapper.querySelector('iframe'); // Get the iframe inside the wrapper
-            
-            // Toggle the visibility of the iframe
-            const isHidden = iframe.style.display === 'none';
-            iframe.style.display = isHidden ? 'block' : 'none';
-            
-            // Change button text based on the iframe's visibility
-            button.textContent = isHidden ? 'Hide' : 'Show';
-        }
-
-        // Get the iframe height control slider
-        const iframeHeightSlider = document.getElementById('iframe-height');
-        const iframeHeightValue = document.getElementById('iframe-height-value');
-
-        // Function to update iframe heights when slider changes
-        iframeHeightSlider.addEventListener('input', function() {
-            const height = iframeHeightSlider.value;
-            iframeHeightValue.textContent = height + 'px';
-
-            // Update all iframes' heights
-            const iframes = document.querySelectorAll('iframe');
-            iframes.forEach(iframe => {
-                iframe.style.height = height + 'px';
-            });
-        });
-        const matrixDiv = document.querySelector('.matrix');
-    const matrixToggleBtn = document.getElementById('matrix-toggle');
-
-    matrixToggleBtn.addEventListener('click', () => {
-        if (matrixDiv.style.display === 'none') {
-            matrixDiv.style.display = 'block';
-        } else {
-            matrixDiv.style.display = 'none';
-        }
-    });
-    
-    // Font color picker functionality
-const fontColorPicker = document.getElementById('font-color');
-
-fontColorPicker.addEventListener('input', function() {
-    const chosenColor = fontColorPicker.value;
-
-    // Update body text color
-    document.body.style.color = chosenColor;
-
-    // Function to darken a hex color
-    function darkenColor(hex, factor = 0.5) {
-        let r = parseInt(hex.substr(1, 2), 16);
-        let g = parseInt(hex.substr(3, 2), 16);
-        let b = parseInt(hex.substr(5, 2), 16);
-
-        r = Math.floor(r * factor);
-        g = Math.floor(g * factor);
-        b = Math.floor(b * factor);
-
-        return `rgb(${r}, ${g}, ${b})`;
+<script>
+    // Function to toggle iframe visibility
+    function toggleIframeVisibility(button) {
+        const iframeWrapper = button.parentElement;
+        const iframe = iframeWrapper.querySelector('iframe');
+        const isHidden = iframe.style.display === 'none';
+        iframe.style.display = isHidden ? 'block' : 'none';
+        button.textContent = isHidden ? 'Hide' : 'Show';
     }
 
-    const darkerBg = darkenColor(chosenColor, 0.2); // 20% brightness for background
+    // Iframe height control
+    const iframeHeightSlider = document.getElementById('iframe-height');
+    const iframeHeightValue = document.getElementById('iframe-height-value');
+
+    iframeHeightSlider.addEventListener('input', function() {
+        const height = iframeHeightSlider.value;
+        iframeHeightValue.textContent = height + 'px';
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.style.height = height + 'px';
+        });
+    });
+
+    // Matrix toggle
+    const matrixDiv = document.querySelector('.matrix');
+    const matrixToggleBtn = document.getElementById('matrix-toggle');
+    matrixToggleBtn.addEventListener('click', () => {
+        matrixDiv.style.display = matrixDiv.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Font color picker + persistence
+    const fontColorPicker = document.getElementById('font-color');
+    const savedColor = localStorage.getItem('matrixColor');
+
+    // Function to apply a color theme
+    function applyColor(chosenColor) {
+        // Set text color
+        document.body.style.color = chosenColor;
+
+        // Helper to darken the color
+        function darkenColor(hex, factor = 0.5) {
+            let r = parseInt(hex.substr(1, 2), 16);
+            let g = parseInt(hex.substr(3, 2), 16);
+            let b = parseInt(hex.substr(5, 2), 16);
+            r = Math.floor(r * factor);
+            g = Math.floor(g * factor);
+            b = Math.floor(b * factor);
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        const darkerBg = darkenColor(chosenColor, 0.2);
+
+        // Update iframe wrappers
+        document.querySelectorAll('.iframe-wrapper').forEach(wrapper => {
+            wrapper.style.borderColor = chosenColor;
+            wrapper.style.boxShadow = `0 4px 8px ${chosenColor}80`;
+            wrapper.style.backgroundColor = darkerBg;
+        });
+
+        // Update matrix effect color
+        document.querySelectorAll('.matrix span').forEach(span => {
+            span.style.color = chosenColor;
+        });
+
+        // Update the picker value
+        fontColorPicker.value = chosenColor;
+    }
+
+    // If saved color exists, apply it
+    if (savedColor) {
+        applyColor(savedColor);
+    }
+
+    // Listen for color picker changes
+    fontColorPicker.addEventListener('input', function() {
+        const chosenColor = fontColorPicker.value;
+        applyColor(chosenColor);
+        localStorage.setItem('matrixColor', chosenColor);
+    });
+</script>
+
 
     // Update iframe wrappers (border, glow, background)
     document.querySelectorAll('.iframe-wrapper').forEach(wrapper => {
