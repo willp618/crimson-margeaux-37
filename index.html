@@ -345,13 +345,13 @@
         matrixDiv.style.display = matrixDiv.style.display === 'none' ? 'block' : 'none';
     });
 
-    // Font color picker + persistence
+    // Font color picker + persistence with unique ID
     const fontColorPicker = document.getElementById('font-color');
-    const savedColor = localStorage.getItem('matrixColor');
+    const localStorageKey = 'matrix_dx_color'; // unique ID for this page/site
+    const savedColor = localStorage.getItem(localStorageKey);
 
     // Function to apply a color theme
     function applyColor(chosenColor) {
-        // Set text color
         document.body.style.color = chosenColor;
 
         // Helper to darken the color
@@ -379,11 +379,11 @@
             span.style.color = chosenColor;
         });
 
-        // Update the picker value
+        // Update picker value
         fontColorPicker.value = chosenColor;
     }
 
-    // If saved color exists, apply it
+    // Apply saved color if exists
     if (savedColor) {
         applyColor(savedColor);
     }
@@ -392,26 +392,10 @@
     fontColorPicker.addEventListener('input', function() {
         const chosenColor = fontColorPicker.value;
         applyColor(chosenColor);
-        localStorage.setItem('matrixColor', chosenColor);
+        localStorage.setItem(localStorageKey, chosenColor); // save under unique ID
     });
 </script>
 
-
-    // Update iframe wrappers (border, glow, background)
-    document.querySelectorAll('.iframe-wrapper').forEach(wrapper => {
-        wrapper.style.borderColor = chosenColor;
-        wrapper.style.boxShadow = `0 4px 8px ${chosenColor}80`; // 80 = transparency
-        wrapper.style.backgroundColor = darkerBg;
-    });
-
-    // Update matrix effect
-    document.querySelectorAll('.matrix span').forEach(span => {
-        span.style.color = chosenColor;
-    });
-});
-
-
-    </script>
 </body>
 
 </html>
